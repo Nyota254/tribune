@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse,Http404
+from django.http import HttpResponse,Http404,HttpResponseRedirect
 import datetime as dt
-from .models import Article
+from .models import Article,NewsLetterRecepients
+from .forms import NewsLetterForm
 
 # Create your views here.
 def welcome(request):
@@ -11,17 +12,18 @@ def welcome(request):
 def news_of_day(request):
     date = dt.date.today()
     news = Article.todays_news()
-
-    #Function to convert date object to find exact dates
-    # day = convert_dates(date)
-    # html = f'''
-    #         <html>
-    #             <body>
-    #                 <h1>News for {day} {date.day}-{date.month}-{date.year}</h1>
-    #             </body>
-    #         </html>
-    #         '''
-    return render(request,'all-news/today-news.html',{"date":date,"news":news})
+    form = NewsLetterForm()
+    if request.method == 'POST':
+        form = NewsLetterForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['your_name']
+            email = form.cleaned_data['email']
+            recipient = NewsLetterRecepients(name=name,email=email)
+            recipient.save()
+            return HttpResponseRedirect('/')
+        else:
+            form = NewsLetterForm()
+    return render(request,'all-news/today-news.html',{"date":date,"news":news,"letterForm":form})
 
 # def convert_dates(dates):
 #     ##function that gets the weekday number for dates
