@@ -3,6 +3,7 @@ from django.http import HttpResponse,Http404,HttpResponseRedirect
 import datetime as dt
 from .models import Article,NewsLetterRecepients
 from .forms import NewsLetterForm
+from .emails import send_welcome_email
 
 # Create your views here.
 def welcome(request):
@@ -20,20 +21,12 @@ def news_of_day(request):
             email = form.cleaned_data['email']
             recipient = NewsLetterRecepients(name=name,email=email)
             recipient.save()
+            send_welcome_email(name,email)
             return HttpResponseRedirect('/')
         else:
             form = NewsLetterForm()
     return render(request,'all-news/today-news.html',{"date":date,"news":news,"letterForm":form})
 
-# def convert_dates(dates):
-#     ##function that gets the weekday number for dates
-#     day_number = dt.date.weekday(dates)
-
-#     days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
-
-#     ##Returning the actual day of the week
-#     day = days[day_number]
-#     return day
 
 def past_days_news(request,past_date):
     try:
@@ -44,15 +37,6 @@ def past_days_news(request,past_date):
         raise Http404()
         assert False
 
-    # day = convert_dates(date)
-
-    # html = f'''
-    #         <html>
-    #             <body>
-    #                 <h1>News for {day} {date.day}-{date.month}-{date.year}</h1>
-    #             </body>
-    #         </html>
-    #         '''
     news = Article.days_news(date)
     if date == dt.date.today():
         return redirect(news_of_day)
