@@ -2,8 +2,9 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse,Http404,HttpResponseRedirect
 import datetime as dt
 from .models import Article,NewsLetterRecepients
-from .forms import NewsLetterForm
+from .forms import NewsLetterForm,NewsArticleForm
 from .emails import send_welcome_email
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def welcome(request):
@@ -13,7 +14,6 @@ def welcome(request):
 def news_of_day(request):
     date = dt.date.today()
     news = Article.todays_news()
-    form = NewsLetterForm()
     if request.method == 'POST':
         form = NewsLetterForm(request.POST)
         if form.is_valid():
@@ -23,8 +23,8 @@ def news_of_day(request):
             recipient.save()
             send_welcome_email(name,email)
             return HttpResponseRedirect('/')
-        else:
-            form = NewsLetterForm()
+    else:
+        form = NewsLetterForm()
     return render(request,'all-news/today-news.html',{"date":date,"news":news,"letterForm":form})
 
 
@@ -54,6 +54,7 @@ def search_results(request):
         message = "You havent searched for any term"
         return render(request,'all-news/search.html',{"messsage":message})
 
+@login_required(login_url='/accounts/login/')
 def article(request,article_id):
     try:
         article = Article.objects.get(id = article_id)
