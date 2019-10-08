@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^*$c65ua)g&%=3#epo_d=@2em&#(u=(ihoh%)x#dg9oejy$&jw'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -107,7 +107,7 @@ DATABASES['default'].update(db_from_env)
 ALLOWED_HOSTS= config('ALLOWED_HOSTS',cast=Csv())
 
 # Email configurations
-EMAIL_USE_TSL=config('EMAIL_USE_TSL')
+EMAIL_USE_TLS=config('EMAIL_USE_TLS')
 EMAIL_HOST=config('EMAIL_HOST')
 EMAIL_PORT=config('EMAIL_PORT')
 EMAIL_HOST_USER=config('EMAIL_HOST_USER')
