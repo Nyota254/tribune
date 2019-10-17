@@ -40,6 +40,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'bootstrap3',
     'tinymce',
+    'rest_framework',
+    'rest_framework.authtoken',
     'news.apps.NewsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -165,3 +167,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 django_heroku.settings(locals())
 
 LOGIN_REDIRECT_URL = '/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
